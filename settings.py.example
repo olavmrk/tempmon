@@ -1,0 +1,12 @@
+# This is a list of parameters for connecting to the InfluxDB server.
+# See the list of arguments allowed for influxdb.InfluxDBClient():
+# http://influxdb-python.readthedocs.org/en/latest/api-documentation.html#influxdb.InfluxDBClient
+INFLUXDB_CONNECT = {
+  'host': '127.0.0.1',
+  'database': 'temperature',
+  #'username': 'root',
+  #'password': 'root',
+}
+
+# The InfluxDB measurement we will store the data in.
+INFLUXDB_MEASUREMENT = 'temperature'

@@ -2,8 +2,10 @@
 import influxdb
 import math
 import os
+import queue
 import re
 import sys
+import threading
 import time
 import traceback
 
@@ -14,8 +16,15 @@ class Writer:
 
     def __init__(self):
         self.client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT)
+        self.queue = queue.Queue()
+        worker = threading.Thread(name='influxdb-writer', target=self.run)
+        worker.daemon = True
+        worker.start()
 
     def write_points(self, points):
+        self.queue.put(points)
+
+    def _write_points(self, points):
         try:
             self.client.write_points(points)
         except KeyboardInterrupt:
@@ -24,6 +33,11 @@ class Writer:
             print('Failed to send in temperature data:', file=sys.stderr)
             traceback.print_exc()
             pass
+
+    def run(self):
+        while True:
+            points = self.queue.get()
+            self._write_points(points)
 
 
 def find_devices():

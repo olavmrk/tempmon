@@ -15,7 +15,7 @@ import settings
 class Writer:
 
     def __init__(self):
-        self.client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT, timeout=30)
+        self.client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT, timeout=30, retries=1)
         self.queue = queue.Queue()
         worker = threading.Thread(name='influxdb-writer', target=self.run)
         worker.daemon = True

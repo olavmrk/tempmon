@@ -9,6 +9,16 @@ import traceback
 
 import settings
 
+
+class Writer:
+
+    def __init__(self):
+        self.client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT)
+
+    def write_points(self, points):
+        self.client.write_points(points)
+
+
 def find_devices():
     devices = set()
     for d in os.listdir('/sys/bus/w1/devices'):
@@ -81,12 +91,8 @@ def do_sample(timestamp, dbclient):
         traceback.print_exc()
         pass
 
-def influxdb_connect():
-    client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT)
-    return client
-
 def main():
-    dbclient = influxdb_connect()
+    dbclient = Writer()
     while True:
         current_time = time.time()
         next_time = math.ceil(current_time / 10) * 10

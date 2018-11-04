@@ -16,7 +16,14 @@ class Writer:
         self.client = influxdb.InfluxDBClient(**settings.INFLUXDB_CONNECT)
 
     def write_points(self, points):
-        self.client.write_points(points)
+        try:
+            self.client.write_points(points)
+        except KeyboardInterrupt:
+            raise
+        except:
+            print('Failed to send in temperature data:', file=sys.stderr)
+            traceback.print_exc()
+            pass
 
 
 def find_devices():
@@ -82,14 +89,7 @@ def do_sample(timestamp, dbclient):
                 'value': temperature
             }
         })
-    try:
-        dbclient.write_points(json_body)
-    except KeyboardInterrupt:
-        raise
-    except:
-        print('Failed to send in temperature data:', file=sys.stderr)
-        traceback.print_exc()
-        pass
+    dbclient.write_points(json_body)
 
 def main():
     dbclient = Writer()

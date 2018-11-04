@@ -27,8 +27,6 @@ class Writer:
     def _write_points(self, points):
         try:
             self.client.write_points(points)
-        except KeyboardInterrupt:
-            raise
         except:
             print('Failed to send in temperature data:', file=sys.stderr)
             traceback.print_exc()

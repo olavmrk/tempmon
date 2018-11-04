@@ -25,6 +25,7 @@ class Writer:
         self.queue.put(points)
 
     def _write_points(self, points):
+        delay = 1
         while True:
             try:
                 self.client.write_points(points)
@@ -32,6 +33,10 @@ class Writer:
             except:
                 print('Failed to send in temperature data:', file=sys.stderr)
                 traceback.print_exc()
+                time.sleep(delay)
+                delay *= 2
+                if delay > 300:
+                    delay = 300
 
     def run(self):
         while True:

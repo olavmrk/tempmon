@@ -25,12 +25,13 @@ class Writer:
         self.queue.put(points)
 
     def _write_points(self, points):
-        try:
-            self.client.write_points(points)
-        except:
-            print('Failed to send in temperature data:', file=sys.stderr)
-            traceback.print_exc()
-            pass
+        while True:
+            try:
+                self.client.write_points(points)
+                return
+            except:
+                print('Failed to send in temperature data:', file=sys.stderr)
+                traceback.print_exc()
 
     def run(self):
         while True:
